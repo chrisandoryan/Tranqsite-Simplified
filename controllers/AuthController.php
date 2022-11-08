@@ -12,7 +12,7 @@
             $row = $result->fetch_assoc();
         }
         else {
-
+            $_SESSION['error'][] = "Incorrect username or password, please check";
+            header('Location: ../login.php');
         }
-
     }
