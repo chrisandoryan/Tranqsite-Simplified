@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['is_login'])) {
+    $_SESSION['error'][] = "You are not logged in.";
+    header('Location: ../login.php');
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,22 +22,32 @@
 </head>
 
 <div class="nav">
-	<a class="button btn btn-success btn-ghost newq" href="messages.php">Messages</a>
-	<a class="button btn btn-primary btn-ghost newq" href="send.php">Send Message</a>
-	<a class=" btn btn-default btn-ghost skip" href="./controllers/AuthController.php?logout">Logout</a>
+    <a class="button btn btn-success btn-ghost newq" href="messages.php">Messages</a>
+    <a class="button btn btn-primary btn-ghost newq" href="send.php">Send Message</a>
+    <a class=" btn btn-default btn-ghost skip" href="./controllers/AuthController.php?logout">Logout</a>
 </div>
+
 <body class="hack dark">
-	<div class="grid main-form">
-    <div>
-      <div class="card">
-        <header class="card-header">To: Someone</header>
-        <header class="card-header">Lorem Ipsum</header>
-        <div class="card-content">
-          <div class="inner">Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio iure vitae dicta rerum natus, vero laudantium veritatis. Laboriosam iste unde quis alias dignissimos aliquam dolorum officia suscipit. Eius, fugit tenetur.</div>
+    <div class="grid main-form">
+        <div>
+            <h1>Account</h1>
+            <div class="card">
+                <header class="card-header">Someone</header>
+                <header class="card-header">someone.ao@gmail.com</header>
+            </div>
         </div>
-      </div>  
-    </div>
-    <!-- <div class="alert alert-warning">No messages found.</div> -->
+        <br><br>
+        <div>
+            <h1>Messages</h1>
+            <div class="card">
+                <header class="card-header">To: Someone</header>
+                <header class="card-header">Lorem Ipsum</header>
+                <div class="card-content">
+                    <div class="inner">Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio iure vitae dicta rerum natus, vero laudantium veritatis. Laboriosam iste unde quis alias dignissimos aliquam dolorum officia suscipit. Eius, fugit tenetur.</div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="alert alert-warning">No messages found.</div> -->
 </body>
 
 </html>
