@@ -13,6 +13,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
 </head>
 
+<!-- Alert Error -->
+<div class="alert alert-error">Wow. Error!</div>
+
+<!-- Alert Success -->
+<div class="alert alert-success">Wow. Success!</div>
+
 <body class="hack dark">
     <div class="grid main-form">
         <form action="controllers/AuthController.php" method="POST">
