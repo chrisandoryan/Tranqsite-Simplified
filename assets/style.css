@@ -1,0 +1,53 @@
+/* https://codepen.io/enzovera/pen/rrJVWa */
+@media (min-width: 600px) {
+    * body {
+      padding: 7.5em 12em;
+    }
+    * text {
+      padding-bottom: 1.13em;
+    }
+  }
+  @media (max-width: 599px) {
+    * body {
+      padding: 3em 4em;
+    }
+    * text {
+      padding-bottom: 0.88em;
+    }
+    * .btn {
+      width: 15em;
+      height: 3.5em;
+    }
+  }
+  * .footer {
+    text-align: center;
+  }
+  @media (min-height: 600px) {
+    * .footer {
+      margin-top: 300px;
+    }
+  }
+  @media (max-height: 599px) {
+    * .footer {
+      margin-top: 150px;
+    }
+  }
+
+  .main-form {
+    display: flex;
+    justify-content: center;
+  }
+
+  .nav {
+    margin: 0em 0em 10em 0;
+  }
+
+  .nav a {
+    float: right;
+    margin: 0 8px;
+  }
+
+  .card {
+    margin-bottom: 20px;
+    width: 80em;
+  }
