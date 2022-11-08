@@ -1,5 +1,5 @@
 <?php
-    return [
+    $config = [
         'server' => 'localhost',
         'username' => 'root',
         'password' => '',
