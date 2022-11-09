@@ -1,3 +1,18 @@
+<?php 
+    session_start();
+    if ($_SESSION['is_login'] !== true) {
+        var_dump("is_login not true");
+        die;
+        header('Location: ./login.php');    
+    }
+    if (!isset($_SESSION['is_login'])) {
+        // Redirect user back to login
+        var_dump("is_login not set");
+        die;
+        header('Location: ./login.php');
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
