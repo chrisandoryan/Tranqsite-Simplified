@@ -32,8 +32,8 @@ if (!isset($_SESSION['is_login'])) {
         <div>
             <h1>Account</h1>
             <div class="card">
-                <header class="card-header">Someone</header>
-                <header class="card-header">someone.ao@gmail.com</header>
+                <header class="card-header"><?= $_SESSION['username']; ?></header>
+                <header class="card-header"><?= $_SESSION['email']; ?></header>
             </div>
         </div>
         <br><br>
