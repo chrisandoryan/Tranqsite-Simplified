@@ -22,7 +22,6 @@
 <body class="hack dark">
     <div class="grid main-form">
         <form action="controllers/AuthController.php" method="POST">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>" />
             <fieldset class="form-group form-success">
                 <label for="username">USERNAME</label>
                 <input id="username" name="username" type="text" placeholder="" class="form-control">

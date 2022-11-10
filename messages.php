@@ -1,3 +1,10 @@
+<?php
+    session_start();
+    // Lakukan session checking, cek apakah $_SESSION['is_login'] nilainya true atau tidak?
+    // Jika $_SESSION['is_login'] tidak true, redirect user ke halaman login.
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
