@@ -1,3 +1,15 @@
+<?php
+    session_start();
+
+    // TODO: 
+    // 1. cek apakah $_SESSION['is_login'] ada datanya
+    // 2. cek apakah $_SESSION['is_login'] nilainya true
+    // jika tidak, redirect dia ke login.php
+    if (true) {
+        
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
