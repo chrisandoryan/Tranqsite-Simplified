@@ -26,6 +26,18 @@
     }
     unset($_SESSION['error']);
 ?>
+
+<?php
+    if(isset($_SESSION['success'])) {
+        foreach ($_SESSION['success'] as $i => $success_msg) {            
+?>
+    <div class="alert alert-success"><?= $success_msg ?></div>
+<?php
+        }
+    }
+    unset($_SESSION['success']);
+?>
+
 <body class="hack dark">
     <div class="grid main-form">
         <form action="controllers/AuthController.php" method="POST">

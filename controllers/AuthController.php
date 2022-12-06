@@ -9,10 +9,12 @@
     
             $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
             $result = $connection->query($query);
-    
+            $connection->close();
+            
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
                 $_SESSION['is_login'] = true;
+                $_SESSION['user_id'] = $row['id'];
                 $_SESSION['username'] = $row['username'];
                 $_SESSION['email'] = $row['email'];
     
