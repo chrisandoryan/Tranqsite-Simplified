@@ -47,8 +47,8 @@
             $user_id = $_SESSION['user_id'];
             
             // (`id`, `sender_id`, `recipient_id`, `title`, `message`, `send_at`)
-            $query = "INSERT INTO communications VALUES(NULL, $user_id, $recipient_id, '$title', '$message');";
-            if ($connection->query($sql) === TRUE) {
+            $query = "INSERT INTO communications VALUES(NULL, $user_id, $recipient_id, '$title', '$message', NOW());";
+            if ($connection->query($query) === TRUE) {
                 $_SESSION['success'][] = "Message has been sent!";
             } else {
                 $_SESSION['error'][] = "Error: " . $sql . " | " . $conn->error;

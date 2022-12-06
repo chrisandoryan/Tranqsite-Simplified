@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +16,29 @@
     <script src="https://code.jquery.com/jquery-3.6.1.slim.js" integrity="sha256-tXm+sa1uzsbFnbXt8GJqsgi2Tw+m4BLGDof6eUPjbtk=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
 </head>
+
+<?php
+    if(isset($_SESSION['error'])) {
+        foreach ($_SESSION['error'] as $i => $err_msg) {            
+?>
+    <div class="alert alert-error"><?= $err_msg ?></div>
+<?php
+        }
+    }
+    unset($_SESSION['error']);
+?>
+
+<?php
+    if(isset($_SESSION['success'])) {
+        foreach ($_SESSION['success'] as $i => $success_msg) {            
+?>
+    <div class="alert alert-success"><?= $success_msg ?></div>
+<?php
+        }
+    }
+    unset($_SESSION['success']);
+?>
+
 
 <div class="nav">
     <a class="button btn btn-success btn-ghost newq" href="messages.php">Messages</a>
