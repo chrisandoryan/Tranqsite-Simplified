@@ -4,10 +4,15 @@
 
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
         if (isset($_POST['login'])) {
-            $username = $_POST['username'];
+            $email = $_POST['email'];
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['error'][] = "Please enter a valid email address!";
+                header('Location: ../login.php');
+                die;
+            }
             $password = $_POST['password'];
     
-            $query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+            $query = "SELECT * FROM users WHERE email='$email' AND password='$password'";
             $result = $connection->query($query);
             $connection->close();
             
@@ -23,11 +28,13 @@
             else {
                 $_SESSION['error'][] = "Incorrect username or password, please check your input.";
                 header('Location: ../login.php');
+                die;
             }
         }
         else {
             $_SESSION['error'][] = "Unknown operation.";
             header('Location: ../login.php');
+            die;
         }
     }
     else if ($_SERVER['REQUEST_METHOD'] === "GET") {

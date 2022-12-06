@@ -43,8 +43,8 @@
     <div class="grid main-form">
         <form action="controllers/AuthController.php" method="POST">
             <fieldset class="form-group form-success">
-                <label for="username">USERNAME</label>
-                <input id="username" name="username" type="text" placeholder="" class="form-control">
+                <label for="email">EMAIL</label>
+                <input id="email" name="email" type="text" placeholder="" class="form-control">
             </fieldset>
             <fieldset class="form-group form-success">
                 <label for="password">PASSWORD</label>
