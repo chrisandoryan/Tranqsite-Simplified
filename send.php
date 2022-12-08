@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,6 +22,17 @@
     <a class="button btn btn-primary btn-ghost newq" href="send.php">Send Message</a>
     <a class=" btn btn-default btn-ghost skip" href="./controllers/AuthController.php?logout">Logout</a>
 </div>
+
+<?php
+    if (isset($_SESSION['error'])) {
+?>
+    <div class="alert alert-error"><?= $_SESSION['error']; ?></div>
+<?php
+        unset($_SESSION['error']);
+    }
+?>
+
+
 
 <body class="hack dark">
     <div class="grid main-form">
@@ -40,7 +55,7 @@
                 <textarea id="message" rows="5" class="form-control" name="message"></textarea>
             </fieldset>
             <div class="form-actions">
-                <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send" />
+                <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send_message" />
             </div>
         </form>
     </div>
