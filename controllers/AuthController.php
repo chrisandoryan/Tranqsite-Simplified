@@ -22,6 +22,7 @@
                 $_SESSION['full_name'] = $row['fullname'];
                 $_SESSION['username'] = $row['username'];
                 $_SESSION['email'] = $row['email'];
+                $_SESSION['user_id'] = $row['id'];
 
                 header('Location: ../messages.php');
             }
