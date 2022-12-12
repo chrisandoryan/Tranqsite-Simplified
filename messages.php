@@ -1,9 +1,12 @@
 <?php
-session_start();
-if (!isset($_SESSION['is_login'])) {
-    $_SESSION['error'][] = "You are not logged in.";
-    header('Location: ../login.php');
-}
+    session_start();
+    if (!isset($_SESSION['is_login'])) {
+        $_SESSION['error'][] = "You are not logged in.";
+        header('Location: ../login.php');
+    }
+
+    $query = "SELECT * FROM communications;";
+
 ?>
 
 <!DOCTYPE html>
