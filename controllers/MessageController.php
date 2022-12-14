@@ -1,5 +1,5 @@
 <?php
-    require_once(__DIR__ . '/controllers/connection.php');
+    require_once(__DIR__ . '/connection.php');
     session_start();
     $recipient_options = ["1", "2", "3", "4"];
 
