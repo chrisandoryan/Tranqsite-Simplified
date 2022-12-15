@@ -1,7 +1,19 @@
 <?php
     session_start();
-    // Lakukan session checking, cek apakah $_SESSION['is_login'] nilainya true atau tidak?
-    // Jika $_SESSION['is_login'] tidak true, redirect user ke halaman login.
+    require_once('./controllers/connection.php');
+    
+    $query = "SELECT * FROM communications;";
+
+    if (isset($_GET['search'])) {
+        $search = $_GET['search'];
+        // halo semua <-- tampilin
+        // hai semua <-- tampilin
+        // apa kabar
+
+        $query = "SELECT * FROM communications WHERE message LIKE '%$search%' OR title LIKE '%$search%';";
+    }
+
+    $result = $connection->query($query);
 
 ?>
 
@@ -38,13 +50,28 @@
         <br><br>
         <div>
             <h1>Messages</h1>
-            <div class="card">
-                <header class="card-header">To: Someone</header>
-                <header class="card-header">Lorem Ipsum</header>
-                <div class="card-content">
-                    <div class="inner">Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio iure vitae dicta rerum natus, vero laudantium veritatis. Laboriosam iste unde quis alias dignissimos aliquam dolorum officia suscipit. Eius, fugit tenetur.</div>
+            <?php 
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+            ?>
+                <!-- disini -->
+                <div class="card">
+                    <header class="card-header">
+                        To: <?= $row['recipient_id']; ?>
+                    </header>
+                    <header class="card-header">
+                        <?= $row['title']; ?>
+                    </header>
+                    <div class="card-content">
+                        <div class="inner">
+                            <?= $row['message']; ?>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            <?php
+                    }
+                }
+            ?>
         </div>
     </div>
     <!-- <div class="alert alert-warning">No messages found.</div> -->
