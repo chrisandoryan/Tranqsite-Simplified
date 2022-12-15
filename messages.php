@@ -1,5 +1,27 @@
 <?php 
     session_start();
+    require_once(__DIR__ . "/controllers/connection.php");
+
+    function map_recipient($recipient_id) {
+        switch ($recipient_id) {
+            case '1':
+                return "Administrator";
+                break;
+            case '2': 
+                return "Network Manager";
+                break;
+            case '3':
+                return "IT Support";
+                break;
+            case '4':
+                return "Coworker";
+                break;
+            default:
+                return "Unknown user";
+                break;
+        }
+    }
+
     if ($_SESSION['is_login'] !== true) {
         var_dump("is_login not true");
         die;
@@ -11,6 +33,15 @@
         die;
         header('Location: ./login.php');
     }
+
+    // (`id`, `sender_id`, `recipient_id`, `title`, `message`, `send_at`)
+    $query = "SELECT * FROM communications;";
+    if (isset($_GET['search'])) {
+        $search = $_GET['search'];
+        $query = "SELECT * FROM communications WHERE title LIKE '%$search%' OR message LIKE '%$search%'";
+    }
+
+    $result = $connection->query($query);
 ?>
 
 <!DOCTYPE html>
@@ -46,13 +77,22 @@
         <br><br>
         <div>
             <h1>Messages</h1>
-            <div class="card">
-                <header class="card-header">To: Someone</header>
-                <header class="card-header">Lorem Ipsum</header>
+            <?php
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        // tampilin html card nya
+            ?>
+                <div class="card">
+                <header class="card-header">To: <?= map_recipient($row['recipient_id']); ?></header>
+                <header class="card-header"> <?= $row['title']; ?> </header>
                 <div class="card-content">
-                    <div class="inner">Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio iure vitae dicta rerum natus, vero laudantium veritatis. Laboriosam iste unde quis alias dignissimos aliquam dolorum officia suscipit. Eius, fugit tenetur.</div>
+                    <div class="inner"> <?= $row['message']; ?>  </div>
                 </div>
-            </div>
+            </div>    
+            <?php  
+                    }
+                }
+            ?>
         </div>
     </div>
     <!-- <div class="alert alert-warning">No messages found.</div> -->
