@@ -1,13 +1,21 @@
 <?php
     session_start();
+    require_once('./controllers/connection.php');
 
     // TODO: 
     // 1. cek apakah $_SESSION['is_login'] ada datanya
     // 2. cek apakah $_SESSION['is_login'] nilainya true
     // jika tidak, redirect dia ke login.php
-    if (true) {
-        
+    
+    $query = "SELECT * FROM communications;";
+
+    if (isset($_GET['search'])) {
+        $search = $_GET['search'];
+        $query = "SELECT * FROM communications WHERE title LIKE '%$search%' OR message LIKE '%$search%'; ";
     }
+
+    $result = $connection->query($query);
+
 ?>
 
 <!DOCTYPE html>
@@ -43,13 +51,29 @@
         <br><br>
         <div>
             <h1>Messages</h1>
+            <?php
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+            ?>
+            <!-- disini -->
             <div class="card">
-                <header class="card-header">To: Someone</header>
-                <header class="card-header">Lorem Ipsum</header>
+                <header class="card-header">
+                    To: <?= $row['recipient_id']; ?>
+                </header>
+                <header class="card-header">
+                    <?= $row['title']; ?>
+                </header>
                 <div class="card-content">
-                    <div class="inner">Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio iure vitae dicta rerum natus, vero laudantium veritatis. Laboriosam iste unde quis alias dignissimos aliquam dolorum officia suscipit. Eius, fugit tenetur.</div>
+                    <div class="inner">
+                        <?= $row['message']; ?>
+                    </div>
                 </div>
             </div>
+            <?php
+                    }
+                }
+            ?>
+            
         </div>
     </div>
     <!-- <div class="alert alert-warning">No messages found.</div> -->
