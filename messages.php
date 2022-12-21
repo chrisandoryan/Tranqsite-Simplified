@@ -36,12 +36,29 @@
 
     // (`id`, `sender_id`, `recipient_id`, `title`, `message`, `send_at`)
     $query = "SELECT * FROM communications;";
+    $stmt = $connection->prepare($query);
+
     if (isset($_GET['search'])) {
         $search = $_GET['search'];
-        $query = "SELECT * FROM communications WHERE title LIKE '%$search%' OR message LIKE '%$search%'";
+
+
+        // $query = "SELECT * FROM communications WHERE title LIKE '%$search%' OR message LIKE '%$search%'";
+
+        $search = "%$search%";
+        $prep_query = "SELECT * FROM communications WHERE title LIKE ? OR message LIKE ?;";
+
+        $stmt = $connection->prepare($prep_query);
+        $stmt->bind_param("ss", $search, $search);
+        // s: string
+        // i: integer
+        // d: double
+        // b: blob
+        
     }
 
-    $result = $connection->query($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
 ?>
 
 <!DOCTYPE html>

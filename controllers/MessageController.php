@@ -9,6 +9,14 @@
             $recipient_id = $_POST['recipient'];
             $message = $_POST['message'];
 
+            $title = htmlspecialchars($title);
+            $message = htmlentities($message);
+
+            // var_dump($title);
+            // var_dump($recipient_id);
+            // var_dump($message);
+            // die;
+
             $recipient_options = ["1", "2", "3", "4"];
             $has_error = false;
 
