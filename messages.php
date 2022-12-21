@@ -26,10 +26,15 @@
 
     if (isset($_GET['search'])) {
         $search = $_GET['search'];
-        $query = "SELECT * FROM communications WHERE title LIKE '%$search%' OR message LIKE '%$search%'";
-    }
-    $result = $connection->query($query);
+        $search = "%$search%";
 
+        $query = "SELECT * FROM communications WHERE title LIKE ? OR message LIKE ?;";
+    }
+
+    $stmt = $connection->prepare($query);
+    $stmt->bind_param("ss", $search, $search);
+    $stmt->execute();
+    $result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -54,6 +59,17 @@
 </div>
 
 <body class="hack dark">
+    <div class="grid main-form">
+        <form class="form" method="GET">
+            <fieldset class="form-group">
+                <label for="username">Search</label>
+                <input id="search" name="search" type="text" placeholder="Enter search query..." class="form-control">
+            </fieldset>
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send" />
+            </div>
+        </form>
+    </div>
     <div class="grid main-form">
         <div>
             <h1>Account</h1>
