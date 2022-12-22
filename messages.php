@@ -3,6 +3,7 @@
     require_once('./controllers/connection.php');
     
     $query = "SELECT * FROM communications;";
+    $stmt = $connection->prepare($query);
 
     if (isset($_GET['search'])) {
         $search = $_GET['search'];
@@ -10,10 +11,23 @@
         // hai semua <-- tampilin
         // apa kabar
 
-        $query = "SELECT * FROM communications WHERE message LIKE '%$search%' OR title LIKE '%$search%';";
+        // $query = "SELECT * FROM communications WHERE message LIKE '%$search%' OR title LIKE '%$search%';";
+        $query = "SELECT * FROM communications WHERE message LIKE ? OR title LIKE ?;";
+        $search = "%$search%";
+
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param("ss", $search, $search);
+        // s -> string
+        // i -> integer
+        // d -> double
+        // b -> binary data
+
     }
 
-    $result = $connection->query($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // $result = $connection->query($query);
 
 ?>
 
@@ -68,14 +82,14 @@
                 <!-- disini -->
                 <div class="card">
                     <header class="card-header">
-                        To: <?= $row['recipient_id']; ?>
+                        To: <?= htmlentities($row['recipient_id']); ?>
                     </header>
                     <header class="card-header">
-                        <?= $row['title']; ?>
+                        <?= htmlentities($row['title']); ?>
                     </header>
                     <div class="card-content">
                         <div class="inner">
-                            <?= $row['message']; ?>
+                            <?= htmlentities($row['message']); ?>
                         </div>
                     </div>
                 </div>

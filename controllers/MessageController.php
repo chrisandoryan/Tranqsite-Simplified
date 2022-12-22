@@ -8,6 +8,9 @@
             $recipient_id = $_POST['recipient'];
             $message = $_POST['message'];
 
+            $title = strip_tags($title);
+            $message = htmlentities($message);
+
             $recipient_options = ["1", "2", "3", "4"];
             $has_error = false;
 
