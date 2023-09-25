@@ -28,8 +28,8 @@
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        var_dump($username);
-        var_dump($password);
+        // var_dump($username);
+        // var_dump($password);
 
         for ($i = 0; $i < count($usernames); $i++) {
             if ($username === $usernames[$i] && $password === $passwords[$i]) {
@@ -39,10 +39,17 @@
         }
 
         if ($is_login) {
-            echo "Login Success.";
+            $_SESSION["success_message"] = "Login Success";
+
+            $_SESSION['login'] = true;
+            $_SESSION['username'] = $username;
+
+            header("Location: ../messages.php");
         }
         else {
-            echo "Login Failed";
+            $_SESSION["error_message"] = "Login Failed";
+
+            header("Location: ../login.php");
         }
 
     }
