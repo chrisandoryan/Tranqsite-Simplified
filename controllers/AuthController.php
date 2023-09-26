@@ -1,5 +1,5 @@
 <?php
-    $is_login = false;
+    session_start();
 
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
@@ -8,9 +8,16 @@
 
         if ($username === "admin" && $password === "admin") {
             echo "Login Success";
+            
+            $_SESSION['is_login'] = true;
+            $_SESSION['username'] = $username;
+
+            header("Location: ../messages.php");
         }
         else {
             echo "Login Failed";
+
+            header("Location: ../login.php");
         }
 
         
