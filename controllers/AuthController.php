@@ -1,5 +1,4 @@
 <?php
-    session_start();
     $is_login = false;
 
     var_dump($is_login == 0);
@@ -39,17 +38,11 @@
         }
 
         if ($is_login) {
-            $_SESSION["success_message"] = "Login Success";
-
-            $_SESSION['login'] = true;
-            $_SESSION['username'] = $username;
-
-            header("Location: ../messages.php");
+           echo "Login Success";
         }
         else {
-            $_SESSION["error_message"] = "Login Failed";
+            echo "Login Failed";
 
-            header("Location: ../login.php");
         }
 
     }
