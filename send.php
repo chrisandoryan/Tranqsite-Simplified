@@ -66,6 +66,11 @@
                 <label for="message">Message:</label>
                 <textarea id="message" rows="5" class="form-control" name="message"></textarea>
             </fieldset>
+            <fieldset class="form-group">
+                <label for="username">Attachment:</label>
+                <input id="file" name="user_file" type="file" placeholder="" class="form-control">
+            </fieldset>
+            <br>
             <div class="form-actions">
                 <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send" />
             </div>

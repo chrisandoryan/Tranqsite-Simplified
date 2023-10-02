@@ -63,6 +63,17 @@
             </div>
         </div>
         <br><br>
+        <br><br>
+        <br><br>
+        <form class="form" method="GET">
+            <fieldset class="form-group">
+                <label for="username">Search</label>
+                <input id="search" name="search" type="text" placeholder="Enter search query..." class="form-control">
+            </fieldset>
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send" />
+            </div>
+        </form>
         <div>
             <h1>Messages</h1>
             <?php

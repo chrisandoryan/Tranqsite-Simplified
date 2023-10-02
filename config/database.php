@@ -1,7 +1,7 @@
 <?php
     $config = [
-        'server' => '157.245.59.91',
-        'username' => 'tranqsite_maintainer',
-        'password' => 'aoaoao',
+        'server' => '127.0.0.1',
+        'username' => 'root',
+        'password' => '',
         'database' => 'tranqsite',
     ];
