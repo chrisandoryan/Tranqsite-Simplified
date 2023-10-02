@@ -1,3 +1,7 @@
+<?php 
+    session_start();
+ ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +18,17 @@
 </head>
 
 <!-- Alert Error -->
-<div class="alert alert-error">Wow. Error!</div>
+<?php
+    if(isset($_SESSION["error_message"])) {
+?>
+        <div class="alert alert-error">
+            <?= $_SESSION["error_message"]; ?>
+        </div>
+
+<?php
+        unset($_SESSION["error_message"]);
+    }
+?>
 
 <!-- Alert Success -->
 <div class="alert alert-success">Wow. Success!</div>
