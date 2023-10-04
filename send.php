@@ -30,7 +30,7 @@
 
 <body class="hack dark">
     <div class="grid main-form">
-        <form class="form" method="POST" action="./controllers/MessageController.php">
+        <form class="form" method="POST" action="./controllers/MessageController.php" enctype="multipart/form-data" >
             <fieldset class="form-group">
                 <label for="username">Title:</label>
                 <input id="title" name="title" type="text" placeholder="" class="form-control">
@@ -47,6 +47,10 @@
             <fieldset class="form-group form-textarea">
                 <label for="message">Message:</label>
                 <textarea id="message" rows="5" class="form-control" name="message"></textarea>
+            </fieldset>
+            <fieldset class="form-group">
+                <label>Attachment: </label>
+                <input type="file" name="user_attachment" class="form-control">
             </fieldset>
             <div class="form-actions">
                 <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send" />

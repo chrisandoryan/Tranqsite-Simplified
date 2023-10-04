@@ -18,7 +18,7 @@
 </head>
 
 <?php
-    if(isset($_SESSION['error_message'])){
+    if(isset($_SESSION['error_message'])) {
         if($_GET['error']) {
             $error_message = $_SESSION['error_message'];
 
