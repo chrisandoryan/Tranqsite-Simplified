@@ -38,6 +38,7 @@
         <br><br>
         <div>
             <h1>Messages</h1>
+            <!-- TODO: display data from database -->
             <div class="card">
                 <header class="card-header">To: Someone</header>
                 <header class="card-header">Lorem Ipsum</header>

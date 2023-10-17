@@ -7,9 +7,8 @@
 
         $attachment = $_FILES['user_file'];
 
-        // TODO: validasi tipe file
-        // TODO: simpen file nya di server
-
+        // TODO: save message to database, into table communications.
+        
     }
 
 

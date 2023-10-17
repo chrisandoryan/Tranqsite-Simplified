@@ -1,48 +1,26 @@
 <?php
     session_start();
-    $is_login = false;
-
-    var_dump($is_login == 0);
-    var_dump($is_login === 0);
-
-    $usernames = [
-      "admin",
-      "dalgona",
-      "parg29",
-      "matchalover",
-      "aseng",
-      "subwayodading"
-    ];
-
-    $passwords = [
-        "admin",
-        "tidakbikinkembung",
-        "supershy",
-        "greentea",
-        "sepuh",
-        "$ugwey"
-    ];
+    require "./connection.php";
 
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        // var_dump($username);
-        // var_dump($password);
+        $query = "SELECT * FROM users WHERE username='$username' AND password='$password';";
 
-        for ($i = 0; $i < count($usernames); $i++) {
-            if ($username === $usernames[$i] && $password === $passwords[$i]) {
-                $is_login = true;
-                break;
-            }
-        }
+        $result = $db->query($query);
+        $db->close();
 
-        if ($is_login) {
+        if ($result->num_rows === 1) {
+            $row = $result->fetch_assoc();
+
             $_SESSION["success_message"] = "Login Success";
 
             $_SESSION['login'] = true;
-            $_SESSION['username'] = $username;
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['role'] = $row['role'];
+            $_SESSION['fullname'] = $row['fullname'];
 
             header("Location: ../messages.php");
         }
