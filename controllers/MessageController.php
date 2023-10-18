@@ -27,12 +27,6 @@
                 $_SESSION['error_message'] = "File is too big!";
             }
 
-
-
-
-
-
-
         }
         else if (isset($_POST['delete'])) {
 
