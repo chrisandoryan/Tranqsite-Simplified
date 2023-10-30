@@ -27,6 +27,9 @@
                 $_SESSION['error_message'] = "File is too big!";
             }
 
+            // TODO: store message data to table 'communications'
+
+            // TODO: display data into user's page
         }
         else if (isset($_POST['delete'])) {
 
