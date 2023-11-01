@@ -6,9 +6,18 @@
         global $conn;
 
         // ini cara yang unsafe.
-        $query = "SELECT * FROM users WHERE username='$username' AND password='$password';";
+        // $query = "SELECT * FROM users WHERE username='$username' AND password='$password';";
 
-        $result = $conn->query($query);
+        $query = "SELECT * FROM users WHERE username=? AND password=?;";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ss", $username, $password);
+        // s - string
+        // i - integer
+        // d - double
+        // b - blob
+
+        $stmt->execute();
+        $result = $stmt->get_result();
 
         return $result;
     }
