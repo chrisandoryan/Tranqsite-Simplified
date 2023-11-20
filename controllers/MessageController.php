@@ -19,23 +19,31 @@
         $sender_id = $_SESSION['id'];
 
         // TODO: sanitize and validate $title input
+        // Assigned to: Group 1
+
         // length < 32
         // cannot be empty
         // must be robust against xss & html injection
 
         // TODO: sanitize and validate $message input
+        // Assigned to: Group 11
+
         // length < 255
         // cannot be empty
         // must be robust against xss & html injection
         // word count >= 5
-        // cannot contain swear words
+        // cannot contain swear words (f*, b*, s*, mony*)
 
         // TODO: sanitize and validate $recipient input
+        // Assigned to: Group 2
+
         // recipient must be between 1 to 4 (inclusive)
         // recipient must be a digit
         // (optional) if recipient is exists on the database
 
         // TODO: sanitize and validate $attachment file
+        // Assigned to: Group 10 & Group 3
+
         // extension must be: .pdf, .png, .jpeg, .docx, .xlsx, .mp4, .zip, .7z, .txt, .rar, .pptx
         // size must be < 10MB
         // size must be > 0B
