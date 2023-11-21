@@ -5,13 +5,6 @@
     ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);
 
-    function checkLength($string, $max_length) {
-        if (empty($string) || $string == "" || strlen($string) > $max_length) {
-            return false;
-        }
-        return true;
-    }
-
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $title = $_POST['title'];
         $recipient = $_POST['recipient'];
