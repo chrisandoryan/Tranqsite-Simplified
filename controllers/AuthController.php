@@ -23,7 +23,8 @@
         // $result = $db->query($query);
 
         // with prepared statement
-        $result = $statement->execute();
+        $statement->execute();
+        $result = $statement->get_result();
 
         $db->close();
 
