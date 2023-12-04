@@ -17,7 +17,7 @@
         $recipient = $_POST['recipient'];
         $message = $_POST['message'];
         $sender_id = $_SESSION['id'];
-        $prohibited = false;
+
         // TODO: sanitize and validate $title input
         // Assigned to: Group 1
 
@@ -44,7 +44,6 @@
             }
         }
         echo $title;
-        die();
 
         // TODO: sanitize and validate $message input
         // Assigned to: Group 11
@@ -72,17 +71,17 @@
         $kasar = explode(" ", $message);
         $messagelow = strtolower($message);
         $katakasar = array('dasar');
-        if(strpos($messagelow,$katakasar[0]!== false){
+        if(strpos($messagelow,$katakasar[0]!== false)){
             $_SESSION['error']="mengandung kata kasar!";
             $prohibited = true;
-        });
+        };
 
         // TODO: sanitize and validate $recipient input
         // Assigned to: Group 2
-        if($recipient < 1 || $recipient > 4 || !is_numeric($recipient) {
+        if($recipient < 1 || $recipient > 4 || !is_numeric($recipient)) {
             echo "Recipient Unavailable";
             return;
-        })
+        }
         // recipient must be between 1 to 4 (inclusive)
         // recipient must be a digit
         // (optional) if recipient is exists on the database
@@ -97,62 +96,58 @@
         // filename must be randomized 10
         // filename must not contain path 3
         // filename must not contain certain special character (., /, \) 10
+    
+        if (is_uploaded_file($_FILES['user_file']['tmp_name'])) {
+            $attachment = $_FILES['user_file'];
+            var_dump($attachment);
 
-
-
-        if($prohibited){
-            header("location: ../send.php ");
-            die;
-        }
-        $attachment = $_FILES['user_file'];
-
-        $fileinfo = pathinfo($attachment['name']);
-        $filename = $fileinfo['filename'];
-        $fileExtension = strtolower($fileinfo['extension']);
-        
-        $maxsize = 10 * 1024 * 1024;
-        if($attachment['size'] > $maxsize || $attachment['size'] <= 0){
-            echo "filenya kegedean atau kekecilan";
-            header("Location: ../send.php");
-            exit;
-        }
-
-        //validate file
-        $allowed_extension = array("jpeg", "pdf", "png", "docx", "xlsx", "mp4", "zip", "7z", "txt", "rar", "pptx");
-
-        if(!in_array($fileExtension, $allowed_extension)){
-            echo "Invalid Extension";
-        }
-
-        // randomize
-        $filename = uniqid().'_'. basename($filename);
-        if(preg_match('/[\/\\\\]+/', $filename) || substr_count($filename, '.') != 1){
-            echo "ada special character dan titik lebih dari satu";
-            exit;
-
-        }
-
-
-        // contain path
-
-
-        $target_directory = "../storage/";
-        $new_file_path = $target_directory . $filename;
-        
-        if (move_uploaded_file($attachment['tmp_name'],$new_file_path)) {
-            echo "File uploaded successfully!";
+            $fileinfo = pathinfo($attachment['name']);
+            $filename = $fileinfo['filename'];
+            $fileExtension = strtolower($fileinfo['extension']);
+            
+            $maxsize = 10 * 1024 * 1024;
+            if($attachment['size'] > $maxsize || $attachment['size'] <= 0){
+                echo "filenya kegedean atau kekecilan";
+                exit;
+            }
+    
+            //validate file
+            $allowed_extension = array("jpeg", "pdf", "png", "docx", "xlsx", "mp4", "zip", "7z", "txt", "rar", "pptx");
+    
+            if(!in_array($fileExtension, $allowed_extension)){
+                echo "Invalid Extension";
+            }
+    
+            // randomize
+            $filename = uniqid().'_'. basename($filename);
+            if(preg_match('/[\/\\\\]+/', $filename) || substr_count($filename, '.') != 1){
+                echo "ada special character dan titik lebih dari satu";
+                exit;
+            }
+    
+            
+            $target_directory = "../storage/";
+            $new_file_path = $target_directory . $filename;
+            
+            if (move_uploaded_file($attachment['tmp_name'],$new_file_path)) {
+                echo "File uploaded successfully!";
+            }
+            else {
+                echo "File upload failed miserably.";
+            }
+    
+            $query = "insert into communications(title,recipient_id,message,
+            attachment,sender_id) values('$title','$recipient','$message',
+            '$new_file_path','$sender_id')";
         }
         else {
-            echo "File upload failed miserably.";
+            $query = "insert into communications(title,recipient_id,message,
+            attachment,sender_id) values('$title','$recipient','$message',
+            NULL,'$sender_id')";
         }
-
-        $query = "insert into communications(title,recipient_id,message,
-        attachment,sender_id) values('$title','$recipient','$message',
-        '$new_file_path','$sender_id')";
 
         $result = $db->query($query);
         $db->close();
-
     }
 
 

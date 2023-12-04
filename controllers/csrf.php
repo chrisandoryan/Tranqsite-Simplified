@@ -1,6 +1,6 @@
 <?php
     session_start();
-
+    
     function generateCsrfToken() {
         $token = sha1(uniqid());
         if (!isset($_SESSION['csrf_token'])) {
