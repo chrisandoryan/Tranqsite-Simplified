@@ -1,5 +1,8 @@
 <?php 
+    require_once("controllers/csrf.php");
     session_start();
+
+    $csrftoken = generateCsrfToken();
  ?>
 
 <!DOCTYPE html>

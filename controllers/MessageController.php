@@ -1,6 +1,8 @@
 <?php
     session_start();
     require("./connection.php");
+    require("./csrf.php");
+
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);
@@ -17,6 +19,12 @@
         $recipient = $_POST['recipient'];
         $message = $_POST['message'];
         $sender_id = $_SESSION['id'];
+        $csrf_token_frominput = $_POST['csrf_token'];
+
+        if (!verifyCsrfToken($csrf_token_frominput)) {
+            echo "CSRF token invalid! Session not valid anymore.";
+            die;
+        }
 
         // TODO: sanitize and validate $title input
         // Assigned to: Group 1
