@@ -1,11 +1,13 @@
 <?php
     session_start();
     require("./connection.php");
+    require("./csrf.php");
+
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
     error_reporting(E_ALL);
 
-    function checkInputLength($string, $max_length) {
+    function checkLength($string, $max_length) {
         if (empty($string) || $string == "" || strlen($string) > $max_length) {
             return false;
         }
@@ -17,144 +19,143 @@
         $recipient = $_POST['recipient'];
         $message = $_POST['message'];
         $sender_id = $_SESSION['id'];
+        $csrf_token_frominput = $_POST['csrf_token'];
 
-        // TODO: sanitize and validate $title input 
+        if (!verifyCsrfToken($csrf_token_frominput)) {
+            echo "CSRF token invalid! Session not valid anymore.";
+            die;
+        }
+
+        // TODO: sanitize and validate $title input
         // Assigned to: Group 1
-        // title must not be empty
-        // title < 20 chars
-        // title must be robust against xss and html injection. any html tags must be stripped.
 
-        if (!isset($title)){ //gunanya agar tidak empty, soalnya kalo empty bakal dikasi echo itu ngasitau
-            echo "Title must not be empty";
-            //kasi semacam break disini biar ga jalan
+        // length < 32
+        // cannot be empty
+        // must be robust against xss & html injection
+
+        if(strlen($title)>=32){
+            $error_message = "Title length too long! must be less than 32 chars!";  
+            echo $error_message;
         }
-        if (strlen($title) > 20){ //strlen buat baca jumlah character dari $title
-            echo "Title must not exceed 20 characters";
-            //kasi semacam break disini biar ga jalan
+        $trimmed_title = trim($title);
+        if (empty($title) || $title == '' || empty($trimmed_title)) {
+            $error_message = "Title cannot be empty!";
+            echo $error_message;
         }
-        $safeTitle = trim($title);
-        //buat ngilangin spasi atau whitespace di akhir dan di awal
 
-        $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-        $safeTitle = strip_tags($safeTitle);
-        //$safeTitle menggantikan $title, sebenernya bisa sih dipake $title lagi tapi ini untuk memperjelas saja
+        $chars = ['kasar', 'bjir', 'gemink', '"', '\'', '/'];
+        $escaped = ['&amp;', '&lt;', '&gt;', '&quot;', '&#x27;', '&#x2f;'];
 
-        //mungkin bawahnya ditambahkan prep statement agar lebih aman lagi
-        
-        // TODO: validate and sanitize $message input
-        // Assigned to: Group 2
-
-        if(isset($message))
-        {
-            $sanitize = mysqli_real_escape_string($db,$message);
-            $message = htmlspecialchars($sanitize);
-            if(!checkInputLength($message, 100))
-            {
-                echo"Tidak memenuhi syarat";
+        for ($i=0; $i < count($chars); $i++) { 
+            if (str_contains($title, $chars[$i])) {
+                $title = str_replace($chars[$i], $escaped[$i], $title);
             }
-                $string  = preg_replace("/\\s+/", " ", $message);
+        }
+        echo $title;
 
-                //trim off beginning and end spaces;
-                $string = trim($string);
+        // TODO: sanitize and validate $message input
+        // Assigned to: Group 11
 
-                //get an array of the words
-                $wordArray = explode(" ", $string);
-                
-                //get the word count
-                $wordCount = sizeof($wordArray);
-
-                //see if its too big
-                if($wordCount < 5) echo "Please make a longer string";
+        // length < 255
+        if(strlen($message)>255){
+            $_SESSION['error'] = 'Message length may not be longer than 255';
+            $prohibited = true;
         }
 
-        // message < 100
-        // message cannot be empty
-        // message > 5 words
-        // message must be robust against xss and html injection. any html tags must be escaped.
+        // cannot be empty
+        if(empty($message)){
+            $_SESSION['error']="Message should not be empty!";
+            $prohibited = true;
+        }
+        // must be robust against xss & html injection
+        $message = htmlspecialchars($message);
+        // word count >= 5
+        $wordcountmessage = explode(" ",$message);
+        if(count($wordcountmessage)<5){
+            $_SESSION["error"] = "Message length atleast must be more than 5 word";
+            $prohibited = true;
+        }
+        // cannot contain swear words (f*, b*, s*, mony*)
+        $kasar = explode(" ", $message);
+        $messagelow = strtolower($message);
+        $katakasar = array('dasar');
+        if(strpos($messagelow,$katakasar[0]!== false)){
+            $_SESSION['error']="mengandung kata kasar!";
+            $prohibited = true;
+        };
 
         // TODO: sanitize and validate $recipient input
-        // Assigned to: Group 3
-
-        // recipient must not be empty
-        if(!isset($recipient)){
-            echo "recipient must not be empty";
+        // Assigned to: Group 2
+        if($recipient < 1 || $recipient > 4 || !is_numeric($recipient)) {
+            echo "Recipient Unavailable";
+            return;
         }
-        else{
-            $recipient = strip_tags($recipient);
-            $recipient = htmlspecialchars($recipient, ENT_QUOTES, 'UTF-8'); 
-        }
-
+        // recipient must be between 1 to 4 (inclusive)
         // recipient must be a digit
+        // (optional) if recipient is exists on the database
 
-        $regex = '/[0-9]/';
-        
-        if(!preg_match($regex, $recipient)){ //is_numeric
 
-            echo" recipient must be a digit";
-        }
+        // TODO: sanitize and validate $attachment file
+        // Assigned to: Group 10 & Group 3
 
-        // recipient must be between 1 - 4 (inclusive)
-        $array = [1,2,3,4];
-        if(!in_array($recipient, $array)){
-            echo "recipient must be between 1 - 4 (inclusive)";
-        }
+        // extension must be: .pdf, .png, .jpeg, .docx, .xlsx, .mp4, .zip, .7z, .txt, .rar, .pptx 10
+        // size must be < 10MB 3
+        // size must be > 0B 10
+        // filename must be randomized 10
+        // filename must not contain path 3
+        // filename must not contain certain special character (., /, \) 10
+    
+        if (is_uploaded_file($_FILES['user_file']['tmp_name'])) {
+            $attachment = $_FILES['user_file'];
+            var_dump($attachment);
 
-        // TODO: validate and sanitize file input
-        // Assigned to: Group 4 & Group 5
-        
-        // file extension must be: .pdf, .jpeg, .docx, .txt, .xlsx, .csv, .png, .mp3, .mp4, .pptx, .mkv 4
-        // file size <= 25MB 5
-        // file size > 0 5
-        // file name length < 50 4
-        // file name must not contain path element (./, ../, etc.) 5
-
-        $attachment = $_FILES['user_file'];
-        $fileinfo = pathinfo($attachment['name']);
-        $filename = trim($fileinfo['filename']);
-        $filesize = $attachment['size'];
-
-        if(!$filesize < 1 || !$filesize > 25000000){
-            $extension = $fileinfo['extension'];
-            $allowed_extension = ['pdf', 'jpeg', 'docx', 'txt', 'xlsx', 'csv', 'png', 'mp3', 'mp4', 'pptx', 'mkv'];
-
-            if(!in_array(strtolower($extension), $allowed_extension)){
-                echo "Invalid Extension File";
-                exit();
+            $fileinfo = pathinfo($attachment['name']);
+            $filename = $fileinfo['filename'];
+            $fileExtension = strtolower($fileinfo['extension']);
+            
+            $maxsize = 10 * 1024 * 1024;
+            if($attachment['size'] > $maxsize || $attachment['size'] <= 0){
+                echo "filenya kegedean atau kekecilan";
+                exit;
             }
-
-            $allowedname = '/^[a-zA-Z0-9_ ]+$/';
-            if(!preg_match($allowedname,$filename)){
-                echo "File name can only alphabet, number, space and underscore";
+    
+            //validate file
+            $allowed_extension = array("jpeg", "pdf", "png", "docx", "xlsx", "mp4", "zip", "7z", "txt", "rar", "pptx");
+    
+            if(!in_array($fileExtension, $allowed_extension)){
+                echo "Invalid Extension";
             }
-
-            // TODO: implement csrf token validation
-            // Assigned to: Group 6 & 7
-
-            if(strlen($filename) > 50){
-                echo "File name should not be more than 50 characters";
-                exit();
+    
+            // randomize
+            $filename = uniqid().'_'. basename($filename);
+            if(preg_match('/[\/\\\\]+/', $filename) || substr_count($filename, '.') != 1){
+                echo "ada special character dan titik lebih dari satu";
+                exit;
             }
-
-
-        }
-
-        $target_directory = "../storage/";
-        $new_file_path = $target_directory . $filename;
-        
-        if (move_uploaded_file($attachment['tmp_name'],$new_file_path)) {
-            echo "File uploaded successfully!";
+    
+            
+            $target_directory = "../storage/";
+            $new_file_path = $target_directory . $filename;
+            
+            if (move_uploaded_file($attachment['tmp_name'],$new_file_path)) {
+                echo "File uploaded successfully!";
+            }
+            else {
+                echo "File upload failed miserably.";
+            }
+    
+            $query = "insert into communications(title,recipient_id,message,
+            attachment,sender_id) values('$title','$recipient','$message',
+            '$new_file_path','$sender_id')";
         }
         else {
-            echo "File upload failed miserably.";
+            $query = "insert into communications(title,recipient_id,message,
+            attachment,sender_id) values('$title','$recipient','$message',
+            NULL,'$sender_id')";
         }
-
-        $query = "insert into communications(title,recipient_id,message,
-        attachment,sender_id) values('$safeTitle','$recipient','$message',
-        '$new_file_path','$sender_id')";
 
         $result = $db->query($query);
         $db->close();
-
     }
 
 
