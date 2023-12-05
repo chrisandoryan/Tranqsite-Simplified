@@ -34,7 +34,7 @@
 <body class="hack dark">
     <div class="grid main-form">
         <form class="form" method="POST" action="./controllers/MessageController.php" enctype="multipart/form-data">
-            <input type="text" value="<?php echo $_SESSION['csrf_token']; ?>" />
+            <input type="hidden" value="<?php echo $_SESSION['csrf_token']; ?>" name="csrf_token" />
             <fieldset class="form-group">
                 <label for="username">Title:</label>
                 <input id="title" name="title" type="text" placeholder="" class="form-control">

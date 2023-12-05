@@ -22,8 +22,12 @@
         $csrf_token_frominput = $_POST['csrf_token'];
 
         if (!verifyCsrfToken($csrf_token_frominput)) {
-            echo "CSRF token invalid! Session not valid anymore.";
+            echo "CSRF token validation failed!";
             die;
+        }
+        else
+        {
+            generateCsrfToken();
         }
 
         // TODO: sanitize and validate $title input
