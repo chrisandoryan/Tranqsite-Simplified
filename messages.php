@@ -18,7 +18,7 @@
     }
     require_once(__DIR__ . '/controllers/connection.php');
 
-    if (!isset($_SESSION['login'])) {
+    if (!isset($_SESSION['is_login'])) {
         $_SESSION['error'][] = "You are not logged in.";
         header('Location: ../login.php');
     }
