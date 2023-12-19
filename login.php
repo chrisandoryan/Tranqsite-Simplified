@@ -1,6 +1,9 @@
-<?php
+<?php 
+    require_once("controllers/csrf.php");
     session_start();
-?>
+
+    $csrftoken = generateCsrfToken();
+ ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,7 +33,17 @@
     }
 ?>
 <!-- Alert Error -->
+<?php
+    if(isset($_SESSION["error_message"])) {
+?>
+        <div class="alert alert-error">
+            <?= $_SESSION["error_message"]; ?>
+        </div>
 
+<?php
+        unset($_SESSION["error_message"]);
+    }
+?>
 
 <!-- Alert Success -->
 <div class="alert alert-success">Wow. Success!</div>

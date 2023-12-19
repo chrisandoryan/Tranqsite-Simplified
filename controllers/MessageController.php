@@ -1,122 +1,162 @@
 <?php
-    
-    function checkValueLength($string, $max_length) {
-        if (empty($string) || $string == "" || $string == null || strlen($string) > $max_length) {
+    session_start();
+    require("./connection.php");
+    require("./csrf.php");
+
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+
+    function checkLength($string, $max_length) {
+        if (empty($string) || $string == "" || strlen($string) > $max_length) {
             return false;
         }
-
         return true;
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === "POST") {
-        if (isset($_POST['send'])) {
-            $title = $_POST['title'];
-            $recipient = $_POST['recipient'];
-            $message = $_POST['message'];
-            $user_attachment = $_FILES['user_attachment'];
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        $title = $_POST['title'];
+        $recipient = $_POST['recipient'];
+        $message = $_POST['message'];
+        $sender_id = $_SESSION['id'];
+        $csrf_token_frominput = $_POST['csrf_token'];
 
-            // TODO: validate and sanitize $title input
-            // title must not be empty
-            // title length < 30 chars
-            // title should be robust against xss and html injection
-            // Group 1
-            if(checkValueLength($title,30) == TRUE){
-                $title = htmlspecialchars("$title", ENT_QUOTES);
+        if (!verifyCsrfToken($csrf_token_frominput)) {
+            echo "CSRF token invalid! Session not valid anymore.";
+            die;
+        }
+
+        // TODO: sanitize and validate $title input
+        // Assigned to: Group 1
+
+        // length < 32
+        // cannot be empty
+        // must be robust against xss & html injection
+
+        if(strlen($title)>=32){
+            $error_message = "Title length too long! must be less than 32 chars!";  
+            echo $error_message;
+        }
+        $trimmed_title = trim($title);
+        if (empty($title) || $title == '' || empty($trimmed_title)) {
+            $error_message = "Title cannot be empty!";
+            echo $error_message;
+        }
+
+        $chars = ['kasar', 'bjir', 'gemink', '"', '\'', '/'];
+        $escaped = ['&amp;', '&lt;', '&gt;', '&quot;', '&#x27;', '&#x2f;'];
+
+        for ($i=0; $i < count($chars); $i++) { 
+            if (str_contains($title, $chars[$i])) {
+                $title = str_replace($chars[$i], $escaped[$i], $title);
             }
-            else{
-                echo "Wrong Title";
-                return false;
-            }
+        }
+        echo $title;
 
-            // TODO: validate and sanitize $message input
-            // message must not be empty
-            // message must be robust against xss and html injection
-            // message length < 200
-            // message must be at least 5 words
-            // message must not contain trailing spaces
-            // Group 2
-            if (!checkValueLength($message, 200)){
-                echo "invalid message input";
-            } 
+        // TODO: sanitize and validate $message input
+        // Assigned to: Group 11
 
-            if (str_word_count($message) < 5) {
-                
-                echo "Message must at least 5 word!";
-            }
+        // length < 255
+        if(strlen($message)>255){
+            $_SESSION['error'] = 'Message length may not be longer than 255';
+            $prohibited = true;
+        }
 
-            if (trim($message) !== $message) {
-                echo "Message must not contain trailling space!";
-            }
-            if(!(ctype_digit($recipient)&& $recipient >= 1 && $recipient <=4)){
-                echo "Invalid Recipient";
-            }
-            $recipient = intval($recipient);
+        // cannot be empty
+        if(empty($message)){
+            $_SESSION['error']="Message should not be empty!";
+            $prohibited = true;
+        }
+        // must be robust against xss & html injection
+        $message = htmlspecialchars($message);
+        // word count >= 5
+        $wordcountmessage = explode(" ",$message);
+        if(count($wordcountmessage)<5){
+            $_SESSION["error"] = "Message length atleast must be more than 5 word";
+            $prohibited = true;
+        }
+        // cannot contain swear words (f*, b*, s*, mony*)
+        $kasar = explode(" ", $message);
+        $messagelow = strtolower($message);
+        $katakasar = array('dasar');
+        if(strpos($messagelow,$katakasar[0]!== false)){
+            $_SESSION['error']="mengandung kata kasar!";
+            $prohibited = true;
+        };
 
-            $message = htmlspecialchars($message);
-            // TODO: validate and sanitize $recipient
-            // recipient must be between 1-4 (inclusive)
-            // recipient must be a digit
-            // Group 2
+        // TODO: sanitize and validate $recipient input
+        // Assigned to: Group 2
+        if($recipient < 1 || $recipient > 4 || !is_numeric($recipient)) {
+            echo "Recipient Unavailable";
+            return;
+        }
+        // recipient must be between 1 to 4 (inclusive)
+        // recipient must be a digit
+        // (optional) if recipient is exists on the database
 
-            // TODO: validate and sanitize $attachment
-            // file size < 25MB
-            // file extension must be either: .png, .jpeg, .gif, .jpg, .pdf, .txt, .docx, .zip, .xlsx, .rar, .7z, .mp3, .mp4, .mkv, .mov
-            // file size cannot be < 1B
-            // file must be renamed into something random to prevent duplicate
-            // file name must not contain path element (./, ../)
-            // Group 4 & Group 5
-            if(isset($_FILES['user_attachment'])){
-                $file = $_FILES['user_attachment'];
-                $allowedExtention = ['png','jpg','jpeg','gif','pdf','txt',
-                'docx','zip','xlsx','rar','7z','mp3','mp4','mkv','mov'];
-                
-                $maxFileSize = 25 * 1024 * 1024 ;
-                $minFileSize = 1;
 
-                    if($file['size']>= $maxFileSize || $file['size'] < $minFileSize){
-                        echo "invalid file size!!!!!!!";
-                        exit;
+        // TODO: sanitize and validate $attachment file
+        // Assigned to: Group 10 & Group 3
 
-                    }
+        // extension must be: .pdf, .png, .jpeg, .docx, .xlsx, .mp4, .zip, .7z, .txt, .rar, .pptx 10
+        // size must be < 10MB 3
+        // size must be > 0B 10
+        // filename must be randomized 10
+        // filename must not contain path 3
+        // filename must not contain certain special character (., /, \) 10
+    
+        if (is_uploaded_file($_FILES['user_file']['tmp_name'])) {
+            $attachment = $_FILES['user_file'];
+            var_dump($attachment);
 
-                    $fileInfo = pathinfo($file['name']);
-                    $fileExtention = strtolower($fileInfo['extension']);
-
-                    if(!in_array($fileExtention,$allowedExtention)){
-                        echo "error, invalid file type";
-                    }
-                    
-            }
+            $fileinfo = pathinfo($attachment['name']);
+            $filename = $fileinfo['filename'];
+            $fileExtension = strtolower($fileinfo['extension']);
             
-
+            $maxsize = 10 * 1024 * 1024;
+            if($attachment['size'] > $maxsize || $attachment['size'] <= 0){
+                echo "filenya kegedean atau kekecilan";
+                exit;
+            }
+    
+            //validate file
+            $allowed_extension = array("jpeg", "pdf", "png", "docx", "xlsx", "mp4", "zip", "7z", "txt", "rar", "pptx");
+    
+            if(!in_array($fileExtension, $allowed_extension)){
+                echo "Invalid Extension";
+            }
+    
+            // randomize
+            $filename = uniqid().'_'. basename($filename);
+            if(preg_match('/[\/\\\\]+/', $filename) || substr_count($filename, '.') != 1){
+                echo "ada special character dan titik lebih dari satu";
+                exit;
+            }
+    
+            
             $target_directory = "../storage/";
-            // <random_code>_<filename>.<ext>
-            // 123duq8_ktp.jpeg
-            $new_file_name = uniqid() . "_" . $user_attachment['name'];
-
-            echo $target_directory . $new_file_name;
-
-            if (move_uploaded_file($user_attachment['tmp_name'], $target_directory . $new_file_name)) {
-                echo "Upload Success!";
+            $new_file_path = $target_directory . $filename;
+            
+            if (move_uploaded_file($attachment['tmp_name'],$new_file_path)) {
+                echo "File uploaded successfully!";
             }
             else {
-                echo "Upload Failed.";
+                echo "File upload failed miserably.";
             }
-
-            if ($user_attachment['size'] > 20 * 1000 * 1000) {
-                echo "File is too big!";
-                $_SESSION['error_message'] = "File is too big!";
-            }
-
-            // TODO: store message data to table 'communications'
-
-            // TODO: display data into user's page
+    
+            $query = "insert into communications(title,recipient_id,message,
+            attachment,sender_id) values('$title','$recipient','$message',
+            '$new_file_path','$sender_id')";
         }
-        else if (isset($_POST['delete'])) {
-
+        else {
+            $query = "insert into communications(title,recipient_id,message,
+            attachment,sender_id) values('$title','$recipient','$message',
+            NULL,'$sender_id')";
         }
+
+        $result = $db->query($query);
+        $db->close();
     }
-
 
 
 ?>

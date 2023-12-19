@@ -2,47 +2,41 @@
     session_start();
     require "./connection.php";
 
-    function doLogin($username, $password) {
-        global $conn;
-
-        // ini cara yang unsafe.
-        // $query = "SELECT * FROM users WHERE username='$username' AND password='$password';";
-
-        $query = "SELECT * FROM users WHERE username=? AND password=?;";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ss", $username, $password);
-        // s - string
-        // i - integer
-        // d - double
-        // b - blob
-
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        return $result;
-    }
-
-
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
         $username = $_POST['username'];
         $password = $_POST['password'];
 
-        $login_result = doLogin($username, $password);
+        // without prepared statement
+        // $query = "SELECT * FROM users WHERE username='$username' AND password='$password';";
 
-        if ($login_result->num_rows == 1) {
-            $data = $login_result->fetch_assoc();
+        // with prepared statement
+        $query = "SELECT * FROM users WHERE username=? AND password=?;";
+        $statement = $db->prepare($query);
+        $statement->bind_param("ss", $username, $password);
+        // s - string
+        // i - integer
+        // b - blob
+        // d - double
+        
+        // without prepared statement
+        // $result = $db->query($query);
 
-           $_SESSION["success_message"] = "Welcome, $username";
+        // with prepared statement
+        $statement->execute();
+        $result = $statement->get_result();
 
-           $_SESSION['is_login'] = true;
-           $_SESSION['username'] = $data["username"];
-           $_SESSION["role"] = $data["role"];
-           $_SESSION["fullname"] = $data["fullname"];
+        $db->close();
 
+        if ($result->num_rows === 1) {
+            $row = $result->fetch_assoc();
 
-
-           header("Location: ../messages.php");
+            $_SESSION["success_message"] = "Login Success";
+            $_SESSION["id"] = $row['id'];
+            $_SESSION['login'] = true;
+            $_SESSION['username'] = $row['username'];
+            $_SESSION['role'] = $row['role'];
+            $_SESSION['fullname'] = $row['fullname'];
 
         }
         else {

