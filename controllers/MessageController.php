@@ -20,6 +20,13 @@
             // title length < 30 chars
             // title should be robust against xss and html injection
             // Group 1
+            if(checkValueLength($title,30) == TRUE){
+                $title = htmlspecialchars("$title", ENT_QUOTES);
+            }
+            else{
+                echo "Wrong Title";
+                return false;
+            }
 
             // TODO: validate and sanitize $message input
             // message must not be empty
@@ -28,7 +35,24 @@
             // message must be at least 5 words
             // message must not contain trailing spaces
             // Group 2
+            if (!checkValueLength($message, 200)){
+                echo "invalid message input";
+            } 
 
+            if (str_word_count($message) < 5) {
+                
+                echo "Message must at least 5 word!";
+            }
+
+            if (trim($message) !== $message) {
+                echo "Message must not contain trailling space!";
+            }
+            if(!(ctype_digit($recipient)&& $recipient >= 1 && $recipient <=4)){
+                echo "Invalid Recipient";
+            }
+            $recipient = intval($recipient);
+
+            $message = htmlspecialchars($message);
             // TODO: validate and sanitize $recipient
             // recipient must be between 1-4 (inclusive)
             // recipient must be a digit
@@ -41,7 +65,28 @@
             // file must be renamed into something random to prevent duplicate
             // file name must not contain path element (./, ../)
             // Group 4 & Group 5
+            if(isset($_FILES['user_attachment'])){
+                $file = $_FILES['user_attachment'];
+                $allowedExtention = ['png','jpg','jpeg','gif','pdf','txt',
+                'docx','zip','xlsx','rar','7z','mp3','mp4','mkv','mov'];
+                
+                $maxFileSize = 25 * 1024 * 1024 ;
+                $minFileSize = 1;
 
+                    if($file['size']>= $maxFileSize || $file['size'] < $minFileSize){
+                        echo "invalid file size!!!!!!!";
+                        exit;
+
+                    }
+
+                    $fileInfo = pathinfo($file['name']);
+                    $fileExtention = strtolower($fileInfo['extension']);
+
+                    if(!in_array($fileExtention,$allowedExtention)){
+                        echo "error, invalid file type";
+                    }
+                    
+            }
             
 
             $target_directory = "../storage/";
@@ -57,7 +102,6 @@
             else {
                 echo "Upload Failed.";
             }
-
 
             if ($user_attachment['size'] > 20 * 1000 * 1000) {
                 echo "File is too big!";
