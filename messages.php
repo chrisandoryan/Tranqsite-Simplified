@@ -1,10 +1,45 @@
 <?php
     session_start();
+    function map_recipient($recipient_id) {
+        switch ($recipient_id) {
+            case '1':
+                return "Administrator";
+                break;
+            case '2':
+                return "Network Manager";
+                break;
+            case '3':
+                return "IT Support";
+                break;
+            case '4':
+                return "Coworker";
+                break;
+        }
+    }
+    require_once(__DIR__ . '/controllers/connection.php');
 
-    if ($_SESSION['is_login'] !== true) {
-      header("Location: login.php");  
+    if (!isset($_SESSION['login'])) {
+        $_SESSION['error'][] = "You are not logged in.";
+        header('Location: ../login.php');
     }
 
+    $query = "SELECT * FROM communications;";
+
+    if (isset($_GET['search'])) {
+        $search = $_GET['search'];
+        $search = "%$search%";
+
+        $query = "SELECT * FROM communications WHERE title LIKE ? OR message LIKE ?;";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param("ss", $search, $search);
+        $stmt->execute();
+    }
+    else {
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+    }
+    
+    $result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -30,26 +65,44 @@
 
 <body class="hack dark">
     <div class="grid main-form">
+        <form class="form" method="GET">
+            <fieldset class="form-group">
+                <label for="username">Search</label>
+                <input id="search" name="search" type="text" placeholder="Enter search query..." class="form-control">
+            </fieldset>
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary btn-block btn-ghost" name="send" />
+            </div>
+        </form>
+    </div>
+    <div class="grid main-form">
         <div>
             <h1>Account</h1>
             <div class="card">
-                <header class="card-header">Someone</header>
-                <header class="card-header">someone.ao@gmail.com</header>
+                <header class="card-header"><?= $_SESSION['username']; ?></header>
+                <header class="card-header"><?= $_SESSION['email']; ?></header>
             </div>
         </div>
         <br><br>
         <div>
             <h1>Messages</h1>
+            <?php
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+            ?>
             <div class="card">
-                <header class="card-header">To: Someone</header>
-                <header class="card-header">Lorem Ipsum</header>
+                <header class="card-header">To: <?= map_recipient($row['recipient_id']); ?></header>
+                <header class="card-header"><?= $row['title']; ?></header>
                 <div class="card-content">
-                    <div class="inner">Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio iure vitae dicta rerum natus, vero laudantium veritatis. Laboriosam iste unde quis alias dignissimos aliquam dolorum officia suscipit. Eius, fugit tenetur.</div>
+                    <div class="inner"><?= $row['message']; ?></div>
                 </div>
             </div>
+            <?php
+                    }
+                }
+            ?>
         </div>
-    </div>
-    <!-- <div class="alert alert-warning">No messages found.</div> -->
+        <!-- <div class="alert alert-warning">No messages found.</div> -->
 </body>
 
 </html>
