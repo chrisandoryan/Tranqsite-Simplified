@@ -38,6 +38,9 @@
             $_SESSION['role'] = $row['role'];
             $_SESSION['fullname'] = $row['fullname'];
 
+            header("Location: ../messages.php");
+
+
         }
         else {
             $_SESSION["error_message"] = "Login Failed.";
